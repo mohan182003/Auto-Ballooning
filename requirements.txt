@@ -1,0 +1,22 @@
+fastapi>=0.110
+uvicorn[standard]
+opencv-python-headless
+pdf2image
+pillow
+numpy
+pdf2image
+opencv-python
+pandas
+validators
+imgaug
+scikit-image
+scikit-learn
+tqdm
+efficientnet == 1.0.0
+essential_generators
+editdistance
+pyclipper
+python-dotenv
+accelerate
+tf-keras
+sentence-transformers

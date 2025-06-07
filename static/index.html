@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Balloon overlay demo</title>
+<style>
+  #canvas{position:relative;display:inline-block;border:1px solid #aaa}
+  #canvas img{display:block;max-width:100%}
+  .balloon{
+      position:absolute;width:36px;height:36px;
+      border-radius:50%;background:#28b828;color:#fff;
+      display:flex;justify-content:center;align-items:center;
+      cursor:pointer;user-select:none;font:600 14px/1 sans-serif;
+      transform:translate(-50%,-50%);         /* centre on centroid */
+  }
+</style>
+</head>
+<body>
+
+<input type="file" id="file" accept=".png,.jpg,.jpeg,.pdf">
+<div id="canvas"><img id="dwg" alt=""></div>
+
+<script>
+const fileInput = document.getElementById('file');
+fileInput.onchange = async () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  // --- send file to backend ----------------------------------------
+  const fd = new FormData();
+  fd.append('file', file);
+
+  const res  = await fetch('/extract?with_overlay=true', {
+      method: 'POST', body: fd
+  });
+  if (!res.ok) {
+      alert('Server error: ' + res.statusText);
+      return;
+  }
+  const data = await res.json();
+
+  // --- draw the annotated image ------------------------------------
+  const img = document.getElementById('dwg');
+  img.src = data.annotated_png;
+  img.onload = () => {
+      // remove old balloons if any
+      document.querySelectorAll('.balloon').forEach(b => b.remove());
+
+      // scale factor in case the browser resized the image
+      const scaleX = img.clientWidth  / img.naturalWidth;
+      const scaleY = img.clientHeight / img.naturalHeight;
+
+      for (const m of data.drawing.measurements) {
+          if (!m.bbox) continue;
+          const xs = m.bbox.map(p => p[0]), ys = m.bbox.map(p => p[1]);
+          const cx = xs.reduce((a,b)=>a+b)/xs.length * scaleX;
+          const cy = ys.reduce((a,b)=>a+b)/ys.length * scaleY;
+
+          const d = document.createElement('div');
+          d.className = 'balloon';
+          d.textContent = m.balloon_number;
+          d.style.left = cx + 'px';
+          d.style.top  = cy + 'px';
+          d.onclick = () => alert(
+              `Balloon ${m.balloon_number}\n` +
+              `${m.value}${m.unit||''}` // (${m.measurement_type})`
+          );
+          document.getElementById('canvas').appendChild(d);
+      }
+  };
+};
+</script>
+</body>
+</html>
