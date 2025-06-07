@@ -177,7 +177,7 @@ def ocr_folder(folder_path = '/Users/mohansivakumar/Desktop/edocr2/edocr2/tests/
             'max_img_size': 1024, #Max size after applying scale for the img patch, bigger, better prediction, but more computationally expensive
             #Output
             'backg_save': False, #Option to save the background once all text and boxes have been removed, for synth training purposes
-            'output_path': 'shit/', #Output path
+            'output_path': 'temp/', #Output path
             'save_mask': True, #Option to save the mask output
             'save_raw_output': True, #Option to save raw ouput, i.e, OCR text and box position,
             }
