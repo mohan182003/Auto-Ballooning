@@ -1,5 +1,5 @@
 # Auto Ballooning
 
--- clone the repo
--- setup the environment using environment.yml
--- run using uvicorn main:app --reload
+- Clone the repo  
+- Set up the environment using `environment.yml`  
+- Run using `uvicorn main:app --reload`
